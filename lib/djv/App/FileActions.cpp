@@ -209,7 +209,16 @@ namespace djv
                 {
                     if (auto app = appWeak.lock())
                     {
-                        app->exit();
+                        // Quitting with an unsaved review prompts first, the
+                        // same way closing one does.
+                        app->confirmClose(
+                            [appWeak]
+                            {
+                                if (auto app = appWeak.lock())
+                                {
+                                    app->exit();
+                                }
+                            });
                     }
                 });
 
