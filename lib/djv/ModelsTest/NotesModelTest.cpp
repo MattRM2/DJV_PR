@@ -49,7 +49,7 @@ namespace djv
             FTK_ASSERT(!notes[0].id.empty());
             FTK_ASSERT(!notes[0].created.empty());
             FTK_ASSERT(notes[0].id != notes[1].id);
-            FTK_ASSERT(128.0 == notes[0].time.value());
+            FTK_ASSERT(128.0 == notes[0].time->value());
 
             // Removing by identifier leaves the other note alone.
             const std::string id = notes[0].id;
