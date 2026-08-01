@@ -228,23 +228,13 @@ namespace djv
             _addShortcut("Next", "Next", ftk::Key::Right);
             _addShortcut("NextX10", "Next X10", ftk::KeyShortcut(ftk::Key::Right, static_cast<int>(ftk::KeyModifier::Shift)));
             _addShortcut("NextX100", "Next X100", ftk::KeyShortcut(ftk::Key::Right, static_cast<int>(ftk::KeyModifier::Control)));
-            // Shift and Control on the arrows are already taken by the X10 and
-            // X100 steps. Alt alone is not usable either: on Windows it opens
-            // the menu bar, which swallows the arrow before the app sees it.
-            _addShortcut(
-                "PrevMarker",
-                "Previous review marker",
-                ftk::KeyShortcut(
-                    ftk::Key::Left,
-                    static_cast<int>(ftk::KeyModifier::Alt) |
-                    static_cast<int>(ftk::commandKeyModifier)));
-            _addShortcut(
-                "NextMarker",
-                "Next review marker",
-                ftk::KeyShortcut(
-                    ftk::Key::Right,
-                    static_cast<int>(ftk::KeyModifier::Alt) |
-                    static_cast<int>(ftk::commandKeyModifier)));
+            // The brackets rather than the arrows: every arrow combination is
+            // either taken by the X10 and X100 steps, swallowed by the menu bar
+            // that bare Alt opens on Windows, or claimed by the graphics driver
+            // (Ctrl+Alt+arrow rotates the screen on Intel and AMD). Unmodified
+            // brackets are also what editing tools use to step between points.
+            _addShortcut("PrevMarker", "Previous review marker", ftk::Key::LeftBracket);
+            _addShortcut("NextMarker", "Next review marker", ftk::Key::RightBracket);
             _addShortcut("FocusCurrent", "Focus current", ftk::KeyShortcut(ftk::Key::F, static_cast<int>(ftk::KeyModifier::Control)));
 
             _shortcutsUpdate(app->getSettingsModel()->getShortcuts());

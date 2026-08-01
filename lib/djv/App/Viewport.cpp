@@ -892,6 +892,12 @@ namespace djv
                 ftk::MouseButton::Left == event.button &&
                 0 == event.modifiers)
             {
+                // Claim the button, as the picker and the shuttle do below.
+                // Without this the release never reaches us: the stroke is
+                // never committed, keeps growing on every move, and the undo
+                // that follows has to copy all of it.
+                event.accept = true;
+                takeKeyFocus();
                 const ftk::Box2I& g = getGeometry();
                 const ftk::V2I pos = event.pos - g.min;
                 if (models::DrawTool::Eraser == app->getDrawModel()->getTool())
