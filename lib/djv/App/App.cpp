@@ -1769,6 +1769,24 @@ namespace djv
                 p.settingsFile,
                 p.cmdLine.resetSettings->found());
 
+            // Capture any autosave left by a crashed session before anything can
+            // overwrite or delete it; the recovery prompt is offered once the
+            // main window exists.
+            {
+                std::ifstream f(_autosavePath());
+                if (f.is_open())
+                {
+                    try
+                    {
+                        nlohmann::json json;
+                        f >> json;
+                        p.recoveredAutosave = json;
+                    }
+                    catch (const std::exception&)
+                    {}
+                }
+            }
+
             _modelsInit();
             _observersInit();
             _inputFilesInit();
