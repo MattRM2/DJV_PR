@@ -288,19 +288,22 @@ namespace djv
                     ftk::Key::O,
                     static_cast<int>(ftk::KeyModifier::Shift) |
                     static_cast<int>(ftk::commandKeyModifier)));
+            // Alt rather than Shift on the command modifier: Shift+Ctrl+O is
+            // "Open with audio", and Shift+Ctrl+S is free but keeping the pair
+            // symmetrical is worth more than reusing it.
             _addShortcut(
                 "OpenReview",
                 "Open review",
                 ftk::KeyShortcut(
                     ftk::Key::O,
-                    static_cast<int>(ftk::KeyModifier::Shift) |
+                    static_cast<int>(ftk::KeyModifier::Alt) |
                     static_cast<int>(ftk::commandKeyModifier)));
             _addShortcut(
                 "SaveReview",
                 "Save review",
                 ftk::KeyShortcut(
                     ftk::Key::S,
-                    static_cast<int>(ftk::KeyModifier::Shift) |
+                    static_cast<int>(ftk::KeyModifier::Alt) |
                     static_cast<int>(ftk::commandKeyModifier)));
             _addShortcut("SaveReviewAs", "Save review as");
             _addShortcut("CloseReview", "Close review");
