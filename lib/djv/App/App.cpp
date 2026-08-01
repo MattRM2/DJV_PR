@@ -691,6 +691,9 @@ namespace djv
             for (const auto& i : tl::getPaths(_context, path, dirListOptions))
             {
                 auto item = std::make_shared<models::FilesModelItem>();
+                // Annotations reference their source by this identity, so it has
+                // to exist from the moment the file is opened.
+                item->id = models::generateId();
                 item->path = i;
                 if (first && frames.has_value())
                 {
