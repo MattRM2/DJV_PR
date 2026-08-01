@@ -229,9 +229,22 @@ namespace djv
             _addShortcut("NextX10", "Next X10", ftk::KeyShortcut(ftk::Key::Right, static_cast<int>(ftk::KeyModifier::Shift)));
             _addShortcut("NextX100", "Next X100", ftk::KeyShortcut(ftk::Key::Right, static_cast<int>(ftk::KeyModifier::Control)));
             // Shift and Control on the arrows are already taken by the X10 and
-            // X100 steps.
-            _addShortcut("PrevMarker", "Previous review marker", ftk::KeyShortcut(ftk::Key::Left, static_cast<int>(ftk::KeyModifier::Alt)));
-            _addShortcut("NextMarker", "Next review marker", ftk::KeyShortcut(ftk::Key::Right, static_cast<int>(ftk::KeyModifier::Alt)));
+            // X100 steps. Alt alone is not usable either: on Windows it opens
+            // the menu bar, which swallows the arrow before the app sees it.
+            _addShortcut(
+                "PrevMarker",
+                "Previous review marker",
+                ftk::KeyShortcut(
+                    ftk::Key::Left,
+                    static_cast<int>(ftk::KeyModifier::Alt) |
+                    static_cast<int>(ftk::commandKeyModifier)));
+            _addShortcut(
+                "NextMarker",
+                "Next review marker",
+                ftk::KeyShortcut(
+                    ftk::Key::Right,
+                    static_cast<int>(ftk::KeyModifier::Alt) |
+                    static_cast<int>(ftk::commandKeyModifier)));
             _addShortcut("FocusCurrent", "Focus current", ftk::KeyShortcut(ftk::Key::F, static_cast<int>(ftk::KeyModifier::Control)));
 
             _shortcutsUpdate(app->getSettingsModel()->getShortcuts());

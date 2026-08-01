@@ -2380,6 +2380,7 @@ namespace djv
             p.toolWidgetFactory->addTool("Information", &InfoTool::create);
             p.toolWidgetFactory->addTool("Magnify", &MagnifyTool::create);
             p.toolWidgetFactory->addTool("Messages", &MessagesTool::create);
+            p.toolWidgetFactory->addTool("Review", &ReviewTool::create);
             p.toolWidgetFactory->addTool("Settings", &SettingsTool::create);
             p.toolWidgetFactory->addTool("System Log", &SysLogTool::create);
             p.toolWidgetFactory->addTool("View", &ViewTool::create);
