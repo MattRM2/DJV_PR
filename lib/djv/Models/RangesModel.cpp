@@ -92,7 +92,17 @@ namespace djv
                 value.end(),
                 [](const ReviewRange& a, const ReviewRange& b)
                 {
-                    return a.range.start_time() < b.range.start_time();
+                    // A range with no bounds cannot be ordered against one that
+                    // has them; park it at the end rather than at frame zero.
+                    if (!a.range.has_value())
+                    {
+                        return false;
+                    }
+                    if (!b.range.has_value())
+                    {
+                        return true;
+                    }
+                    return a.range->start_time() < b.range->start_time();
                 });
             p.ranges->setIfChanged(value);
         }

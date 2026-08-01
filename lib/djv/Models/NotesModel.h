@@ -41,7 +41,7 @@ namespace djv
 
             //! Add a note. The identifier and creation time are filled in here,
             //! so callers only provide the frame and the text.
-            void add(const OTIO_NS::RationalTime&, const std::string& text);
+            void add(const std::optional<OTIO_NS::RationalTime>&, const std::string& text);
 
             //! Remove the note with the given identifier.
             void remove(const std::string& id);

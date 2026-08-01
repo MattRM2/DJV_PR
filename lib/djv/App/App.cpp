@@ -708,6 +708,8 @@ namespace djv
             }
         }
 
+        namespace
+        {
             const std::string reviewExtension = ".djvr";
 
             std::string reviewTimestamp()
@@ -1348,9 +1350,9 @@ namespace djv
             std::vector<int> markers;
             for (const auto& note : p.notesModel->getNotes())
             {
-                if (!note.time.strictly_equal(tl::invalidTime))
+                if (note.time.has_value())
                 {
-                    markers.push_back(static_cast<int>(note.time.value()));
+                    markers.push_back(static_cast<int>(note.time->value()));
                 }
             }
             // Every annotation is stamped with the player's time, which is the
@@ -1358,9 +1360,9 @@ namespace djv
             // marks the right place. Filtering on the source would drop those.
             for (const auto& annotation : p.annotationsModel->getAnnotations())
             {
-                if (!annotation.time.strictly_equal(tl::invalidTime))
+                if (annotation.time.has_value())
                 {
-                    markers.push_back(static_cast<int>(annotation.time.value()));
+                    markers.push_back(static_cast<int>(annotation.time->value()));
                 }
             }
             std::sort(markers.begin(), markers.end());

@@ -17,6 +17,7 @@
 
 #include <nlohmann/json.hpp>
 
+#include <optional>
 #include <string>
 #include <vector>
 
@@ -26,6 +27,24 @@ namespace djv
     {
         //! Current review file format version. See docs/ROADMAP_REVIEW_SESSIONS.md.
         constexpr int reviewVersion = 1;
+
+        //! \name Optional time comparison
+        //! Compare strictly: either both unset, or both set to the same value
+        //! at the same rate.
+        //!
+        //! std::optional would otherwise use OTIO's operator==, which converts
+        //! between rates -- frame 12 at 24fps would equal frame 24 at 48fps,
+        //! and two annotations on different frames would compare equal.
+        ///@{
+
+        bool sameTime(
+            const std::optional<OTIO_NS::RationalTime>&,
+            const std::optional<OTIO_NS::RationalTime>&);
+        bool sameRange(
+            const std::optional<OTIO_NS::TimeRange>&,
+            const std::optional<OTIO_NS::TimeRange>&);
+
+        ///@}
 
         //! Generate a stable, unique identifier for a review file entry.
         //!
@@ -46,8 +65,8 @@ namespace djv
             std::string audioPath;     //!< Separate audio, absolute.
             int         videoLayer = 0;
             double      speed = -1.0;
-            OTIO_NS::RationalTime currentTime = tl::invalidTime;
-            OTIO_NS::TimeRange    inOutRange  = tl::invalidTimeRange;
+            std::optional<OTIO_NS::RationalTime> currentTime;
+            std::optional<OTIO_NS::TimeRange>    inOutRange;
         };
 
         //! Comparison setup for a review.
@@ -112,7 +131,7 @@ namespace djv
 
             //! The frame the drawing appears on. A drawing is visible on this
             //! frame only.
-            OTIO_NS::RationalTime time = tl::invalidTime;
+            std::optional<OTIO_NS::RationalTime> time;
 
             std::vector<ReviewStroke> strokes;
 
@@ -130,7 +149,7 @@ namespace djv
             std::string id;
 
             //! The frame the note refers to, captured when it is published.
-            OTIO_NS::RationalTime time = tl::invalidTime;
+            std::optional<OTIO_NS::RationalTime> time;
 
             //! When the note was published, ISO 8601.
             std::string created;
@@ -152,7 +171,7 @@ namespace djv
             //! Free text, defaulted to the frame range when it is created.
             std::string name;
 
-            OTIO_NS::TimeRange range = tl::invalidTimeRange;
+            std::optional<OTIO_NS::TimeRange> range;
 
             bool operator == (const ReviewRange&) const;
             bool operator != (const ReviewRange&) const;

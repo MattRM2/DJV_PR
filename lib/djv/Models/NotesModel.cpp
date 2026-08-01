@@ -49,7 +49,7 @@ namespace djv
             _p->notes->setIfChanged(value);
         }
 
-        void NotesModel::add(const OTIO_NS::RationalTime& time, const std::string& text)
+        void NotesModel::add(const std::optional<OTIO_NS::RationalTime>& time, const std::string& text)
         {
             FTK_P();
             ReviewNote note;

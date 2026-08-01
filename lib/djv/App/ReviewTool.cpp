@@ -159,10 +159,10 @@ namespace djv
             //! Only the notes of that frame are listed, so both are needed to
             //! rebuild the list and either one can change on its own.
             std::vector<models::ReviewNote> notes;
-            OTIO_NS::RationalTime currentTime = tl::invalidTime;
+            std::optional<OTIO_NS::RationalTime> currentTime;
 
             std::shared_ptr<tl::Player> player;
-            OTIO_NS::TimeRange inOutRange = tl::invalidTimeRange;
+            std::optional<OTIO_NS::TimeRange> inOutRange;
 
             std::shared_ptr<ftk::ListObserver<models::ReviewNote> > notesObserver;
             std::shared_ptr<ftk::ListObserver<models::ReviewRange> > rangesObserver;
@@ -458,8 +458,8 @@ namespace djv
                     {
                         p.currentTimeObserver.reset();
                         p.inOutRangeObserver.reset();
-                        p.currentTime = tl::invalidTime;
-                        p.inOutRange = tl::invalidTimeRange;
+                        p.currentTime.reset();
+                        p.inOutRange.reset();
                         _notesUpdate();
                         _inOutUpdate();
                     }
@@ -538,7 +538,7 @@ namespace djv
                     context,
                     ftk::Format("{0}  {1}").
                         arg(range.name).
-                        arg(formatRange(range.range)),
+                        arg(range.range.has_value() ? formatRange(*range.range) : std::string()),
                     row);
                 button->setHStretch(ftk::Stretch::Expanding);
                 button->setTooltip(
@@ -607,9 +607,9 @@ namespace djv
                 // Set the selection first: applying the range makes the in/out
                 // observer fire, and it must not read this as a stale highlight.
                 p.selectedRangeId = id;
-                p.player->setInOutRange(i->range);
+                p.player->setInOutRange(*i->range);
                 // Without this the playhead stays outside the range it just set.
-                p.player->seek(i->range.start_time());
+                p.player->seek(i->range->start_time());
             }
             _rangeSelectionUpdate();
         }
@@ -621,8 +621,8 @@ namespace djv
             // the timeline.
             const bool narrowed =
                 p.player &&
-                !tl::compareExact(p.inOutRange, tl::invalidTimeRange) &&
-                !tl::compareExact(p.inOutRange, p.player->getTimeRange());
+                p.inOutRange.has_value() &&
+                !tl::compareExact(*p.inOutRange, p.player->getTimeRange());
             p.addRangeButton->setEnabled(narrowed);
 
             // Drop the highlight as soon as the in/out points stop matching the
@@ -638,7 +638,7 @@ namespace djv
                     {
                         return value.id == _p->selectedRangeId;
                     });
-                if (i == p.ranges.end() || !tl::compareExact(i->range, p.inOutRange))
+                if (i == p.ranges.end() || !models::sameRange(i->range, p.inOutRange))
                 {
                     p.selectedRangeId.clear();
                     _rangeSelectionUpdate();
@@ -654,11 +654,11 @@ namespace djv
             {
                 return;
             }
-            const OTIO_NS::TimeRange range = p.inOutRange;
-            if (tl::compareExact(range, tl::invalidTimeRange))
+            if (!p.inOutRange.has_value())
             {
                 return;
             }
+            const OTIO_NS::TimeRange range = *p.inOutRange;
             if (p.rangeNameDialog)
             {
                 p.rangeNameDialog->close();
@@ -716,7 +716,7 @@ namespace djv
             if (auto app = _app.lock())
             {
                 // The note is anchored to the frame shown when it is published.
-                OTIO_NS::RationalTime time = tl::invalidTime;
+                std::optional<OTIO_NS::RationalTime> time;
                 if (auto player = app->observePlayer()->get())
                 {
                     time = player->getCurrentTime();
@@ -741,7 +741,7 @@ namespace djv
             std::vector<models::ReviewNote> value;
             for (const auto& note : p.notes)
             {
-                if (note.time.strictly_equal(p.currentTime))
+                if (models::sameTime(note.time, p.currentTime))
                 {
                     value.push_back(note);
                 }
@@ -774,16 +774,16 @@ namespace djv
                 header->setSpacingRole(ftk::SizeRole::SpacingSmall);
 
                 // The frame doubles as the button that goes to it.
-                const bool hasTime = !note.time.strictly_equal(tl::invalidTime);
+                const bool hasTime = note.time.has_value();
                 auto frameButton = ftk::ToolButton::create(
                     context,
                     hasTime ?
-                        ftk::Format("Frame {0}").arg(static_cast<int>(note.time.value())).operator std::string() :
+                        ftk::Format("Frame {0}").arg(static_cast<int>(note.time->value())).operator std::string() :
                         std::string("No frame"),
                     header);
                 frameButton->setEnabled(hasTime);
                 frameButton->setTooltip("Go to the note's frame.");
-                const OTIO_NS::RationalTime time = note.time;
+                const std::optional<OTIO_NS::RationalTime> time = note.time;
                 frameButton->setClickedCallback(
                     [appWeak, time]
                     {
@@ -791,7 +791,7 @@ namespace djv
                         {
                             if (auto player = app->observePlayer()->get())
                             {
-                                player->seek(time);
+                                player->seek(*time);
                             }
                         }
                     });

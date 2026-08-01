@@ -10,6 +10,7 @@ set(HEADERS
     OCIOModel.h
     RangesModel.h
     RecentFilesModel.h
+    Review.h
     SettingsModel.h
     Shortcuts.h
     TimeUnitsModel.h
@@ -30,6 +31,7 @@ set(SOURCE
     OCIOModel.cpp
     RangesModel.cpp
     RecentFilesModel.cpp
+    Review.cpp
     SettingsModel.cpp
     Shortcuts.cpp
     TimeUnitsModel.cpp

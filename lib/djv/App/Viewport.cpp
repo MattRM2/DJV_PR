@@ -1099,7 +1099,7 @@ namespace djv
                     {
                         app->getAnnotationsModel()->addStroke(
                             active[p.strokeSource]->id,
-                            p.currentTime,
+                            *p.currentTime,
                             p.stroke);
                     }
                 }
@@ -1126,7 +1126,7 @@ namespace djv
                     // follows the tool size.
                     app->getAnnotationsModel()->eraseStrokes(
                         active[hit.index]->id,
-                        p.currentTime,
+                        *p.currentTime,
                         hit.pos,
                         app->getDrawModel()->getSize());
                 }
@@ -1207,7 +1207,7 @@ namespace djv
             const auto& annotations = app->getAnnotationsModel()->getAnnotations();
             for (const auto& annotation : annotations)
             {
-                if (!annotation.time.strictly_equal(p.currentTime))
+                if (!models::sameTime(annotation.time, p.currentTime))
                 {
                     continue;
                 }

@@ -131,7 +131,7 @@ namespace djv
             for (const auto& annotation : p.annotations->get())
             {
                 if (annotation.sourceId == sourceId &&
-                    annotation.time.strictly_equal(time))
+                    sameTime(annotation.time, time))
                 {
                     return annotation.strokes;
                 }
@@ -152,7 +152,7 @@ namespace djv
             const ReviewStroke& stroke)
         {
             FTK_P();
-            if (stroke.points.empty() || time.strictly_equal(tl::invalidTime))
+            if (stroke.points.empty())
             {
                 return;
             }
@@ -162,7 +162,7 @@ namespace djv
                 annotations.end(),
                 [&sourceId, &time](const ReviewAnnotation& value)
                 {
-                    return value.sourceId == sourceId && value.time.strictly_equal(time);
+                    return value.sourceId == sourceId && sameTime(value.time, time);
                 });
             if (i != annotations.end())
             {
@@ -191,7 +191,7 @@ namespace djv
             bool changed = false;
             for (auto i = annotations.begin(); i != annotations.end(); )
             {
-                if (i->sourceId == sourceId && i->time.strictly_equal(time))
+                if (i->sourceId == sourceId && sameTime(i->time, time))
                 {
                     auto& strokes = i->strokes;
                     const size_t before = strokes.size();
@@ -236,7 +236,7 @@ namespace djv
                     annotations.end(),
                     [&sourceId, &time](const ReviewAnnotation& value)
                     {
-                        return value.sourceId == sourceId && value.time.strictly_equal(time);
+                        return value.sourceId == sourceId && sameTime(value.time, time);
                     }),
                 annotations.end());
             if (annotations.size() != before)

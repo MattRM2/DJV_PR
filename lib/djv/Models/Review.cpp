@@ -44,6 +44,29 @@ namespace djv
                     jsonToTime(json.at("start")),
                     jsonToTime(json.at("duration")));
             }
+
+        }
+
+        bool sameTime(
+            const std::optional<OTIO_NS::RationalTime>& a,
+            const std::optional<OTIO_NS::RationalTime>& b)
+        {
+            if (a.has_value() != b.has_value())
+            {
+                return false;
+            }
+            return !a.has_value() || a->strictly_equal(*b);
+        }
+
+        bool sameRange(
+            const std::optional<OTIO_NS::TimeRange>& a,
+            const std::optional<OTIO_NS::TimeRange>& b)
+        {
+            if (a.has_value() != b.has_value())
+            {
+                return false;
+            }
+            return !a.has_value() || tl::compareExact(*a, *b);
         }
 
         std::string generateId()
@@ -94,13 +117,13 @@ namespace djv
             {
                 json["speed"] = in.speed;
             }
-            if (!in.currentTime.strictly_equal(tl::invalidTime))
+            if (in.currentTime.has_value())
             {
-                json["currentTime"] = timeToJson(in.currentTime);
+                json["currentTime"] = timeToJson(in.currentTime.value());
             }
-            if (!tl::compareExact(in.inOutRange, tl::invalidTimeRange))
+            if (in.inOutRange.has_value())
             {
-                json["inOutRange"] = rangeToJson(in.inOutRange);
+                json["inOutRange"] = rangeToJson(in.inOutRange.value());
             }
         }
 
@@ -207,7 +230,7 @@ namespace djv
             return
                 id == other.id &&
                 sourceId == other.sourceId &&
-                time.strictly_equal(other.time) &&
+                sameTime(time, other.time) &&
                 strokes == other.strokes;
         }
 
@@ -255,9 +278,9 @@ namespace djv
             json["id"] = in.id;
             json["sourceId"] = in.sourceId;
             json["space"] = "image";
-            if (!in.time.strictly_equal(tl::invalidTime))
+            if (in.time.has_value())
             {
-                json["time"] = timeToJson(in.time);
+                json["time"] = timeToJson(in.time.value());
             }
             json["strokes"] = in.strokes;
         }
@@ -274,7 +297,7 @@ namespace djv
         {
             return
                 id == other.id &&
-                time.strictly_equal(other.time) &&
+                sameTime(time, other.time) &&
                 created == other.created &&
                 text == other.text;
         }
@@ -288,9 +311,9 @@ namespace djv
         {
             json = nlohmann::json::object();
             json["id"] = in.id;
-            if (!in.time.strictly_equal(tl::invalidTime))
+            if (in.time.has_value())
             {
-                json["time"] = timeToJson(in.time);
+                json["time"] = timeToJson(in.time.value());
             }
             json["created"] = in.created;
             json["text"] = in.text;
@@ -309,7 +332,7 @@ namespace djv
             return
                 id == other.id &&
                 name == other.name &&
-                tl::compareExact(range, other.range);
+                sameRange(range, other.range);
         }
 
         bool ReviewRange::operator != (const ReviewRange& other) const
@@ -322,9 +345,9 @@ namespace djv
             json = nlohmann::json::object();
             json["id"] = in.id;
             json["name"] = in.name;
-            if (!tl::compareExact(in.range, tl::invalidTimeRange))
+            if (in.range.has_value())
             {
-                json["range"] = rangeToJson(in.range);
+                json["range"] = rangeToJson(in.range.value());
             }
         }
 
