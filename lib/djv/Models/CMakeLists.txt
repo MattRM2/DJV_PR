@@ -1,10 +1,14 @@
 set(HEADERS
+    AnnotationsModel.h
     AppInfoModel.h
     AudioModel.h
     ColorModel.h
     CommandsModel.h
+    DrawModel.h
     FilesModel.h
+    NotesModel.h
     OCIOModel.h
+    RangesModel.h
     RecentFilesModel.h
     SettingsModel.h
     Shortcuts.h
@@ -15,12 +19,16 @@ set(HEADERS
 set(HEADERS_PRIVATE)
 
 set(SOURCE
+    AnnotationsModel.cpp
     AppInfoModel.cpp
     AudioModel.cpp
     ColorModel.cpp
     CommandsModel.cpp
+    DrawModel.cpp
     FilesModel.cpp
+    NotesModel.cpp
     OCIOModel.cpp
+    RangesModel.cpp
     RecentFilesModel.cpp
     SettingsModel.cpp
     Shortcuts.cpp
